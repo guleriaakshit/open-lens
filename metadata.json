@@ -1,0 +1,5 @@
+{
+  "name": "OpenLens",
+  "description": "A museum-quality explorer for GitHub repositories, featuring advanced filtering and a minimalist aesthetic.",
+  "requestFramePermissions": []
+}
