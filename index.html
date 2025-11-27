@@ -1,271 +1,448 @@
-
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>OpenLens</title>
-    <!-- Sleek Lens/Aperture Favicon -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22none%22 stroke=%22%2327272a%22 stroke-width=%226%22 /><circle cx=%2250%22 cy=%2250%22 r=%2215%22 fill=%22%2327272a%22 /><path d=%22M50 20 L50 5%22 stroke=%22%2327272a%22 stroke-width=%224%22 /><path d=%22M50 80 L50 95%22 stroke=%22%2327272a%22 stroke-width=%224%22 /><path d=%22M20 50 L5 50%22 stroke=%22%2327272a%22 stroke-width=%224%22 /><path d=%22M80 50 L95 50%22 stroke=%22%2327272a%22 stroke-width=%224%22 /></svg>">
-    <!-- Highlight.js Theme (Atom One Dark) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        darkMode: 'class',
-        theme: {
-          extend: {
-            fontFamily: {
-              serif: ['Cinzel', 'serif'],
-              display: ['Cormorant Garamond', 'serif'],
-              sans: ['Inter', 'sans-serif'],
-              logo: ['"Times New Roman MT Condensed"', '"Times New Roman Condensed"', '"Times New Roman"', 'serif'],
-            }
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OpenLens</title>
+  <!-- Sleek Lens/Aperture Favicon -->
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22none%22 stroke=%22%2327272a%22 stroke-width=%226%22 /><circle cx=%2250%22 cy=%2250%22 r=%2215%22 fill=%22%2327272a%22 /><path d=%22M50 20 L50 5%22 stroke=%22%2327272a%22 stroke-width=%224%22 /><path d=%22M50 80 L50 95%22 stroke=%22%2327272a%22 stroke-width=%224%22 /><path d=%22M20 50 L5 50%22 stroke=%22%2327272a%22 stroke-width=%224%22 /><path d=%22M80 50 L95 50%22 stroke=%22%2327272a%22 stroke-width=%224%22 /></svg>">
+  <!-- Highlight.js Theme (Atom One Dark) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['Cinzel', 'serif'],
+            display: ['Cormorant Garamond', 'serif'],
+            sans: ['Inter', 'sans-serif'],
+            logo: ['"Times New Roman MT Condensed"', '"Times New Roman Condensed"', '"Times New Roman"', 'serif'],
           }
         }
       }
-    </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Inter:wght@200;300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
-    <style>
-      /* Responsive Base Scale */
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Inter:wght@200;300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&display=swap"
+    rel="stylesheet">
+  <style>
+    /* Responsive Base Scale */
+    html {
+      font-size: 16px;
+      /* Mobile base */
+    }
+
+    @media (min-width: 768px) {
       html {
-        font-size: 16px; /* Mobile base */
+        font-size: 16px;
+        /* Tablet */
       }
+    }
 
-      @media (min-width: 768px) {
-        html {
-          font-size: 16px; /* Tablet */
-        }
+    @media (min-width: 1024px) {
+      html {
+        font-size: 17px;
+        /* Small Desktop */
       }
+    }
 
-      @media (min-width: 1024px) {
-        html {
-          font-size: 17px; /* Small Desktop */
-        }
+    @media (min-width: 1536px) {
+      html {
+        font-size: 19px;
+        /* Large Desktop */
       }
+    }
 
-      @media (min-width: 1536px) {
-        html {
-          font-size: 19px; /* Large Desktop */
-        }
-      }
+    /* Dynamic Body Background based on Theme */
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #09090b;
+      color: #e4e4e7;
+      overflow: hidden;
+      /* CRITICAL: Prevent body scroll to fix background jump glitch */
+      height: 100vh;
+      width: 100vw;
+    }
 
-      /* Dynamic Body Background based on Theme */
-      body {
-        font-family: 'Inter', sans-serif;
-        background-color: #09090b;
-        color: #e4e4e7;
-        overflow: hidden; /* CRITICAL: Prevent body scroll to fix background jump glitch */
-        height: 100vh;
-        width: 100vw;
-      }
+    html.dark body {
+      background-color: #09090b;
+      color: #e4e4e7;
+    }
 
-      html.dark body {
-        background-color: #09090b;
-        color: #e4e4e7;
-      }
+    html:not(.dark) body {
+      background-color: #fafafa;
+      /* Zinc 50 */
+      color: #18181b;
+      /* Zinc 900 */
+    }
 
-      html:not(.dark) body {
-        background-color: #fafafa; /* Zinc 50 */
-        color: #18181b; /* Zinc 900 */
-      }
+    /* View Transitions API */
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation-duration: 0.5s;
+      animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
-      /* View Transitions API */
-      ::view-transition-old(root),
-      ::view-transition-new(root) {
-        animation-duration: 0.5s;
-        animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-      }
+    /* Premium Text Selection */
+    ::selection {
+      background: #e4e4e7;
+      color: #09090b;
+    }
 
-      /* Premium Text Selection */
-      ::selection {
-        background: #e4e4e7;
-        color: #09090b;
-      }
-      .dark ::selection {
-        background: #e4e4e7;
-        color: #09090b;
-      }
-      :not(.dark) ::selection {
-        background: #18181b;
-        color: #ffffff;
-      }
+    .dark ::selection {
+      background: #e4e4e7;
+      color: #09090b;
+    }
 
-      /* Custom Scrollbar */
-      ::-webkit-scrollbar {
-        width: 6px;
-        height: 6px;
-      }
-      ::-webkit-scrollbar-track {
-        background: transparent;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #e4e4e7;
-        border-radius: 3px;
-      }
-      .dark ::-webkit-scrollbar-thumb {
-        background: #27272a;
-      }
-      .dark ::-webkit-scrollbar-thumb:hover {
-        background: #52525b;
-      }
-      :not(.dark) ::-webkit-scrollbar-thumb {
-        background: #d4d4d8;
-      }
-      :not(.dark) ::-webkit-scrollbar-thumb:hover {
-        background: #a1a1aa;
-      }
+    :not(.dark) ::selection {
+      background: #18181b;
+      color: #ffffff;
+    }
 
-      /* Utilities */
-      .no-scrollbar::-webkit-scrollbar {
-        display: none;
-      }
-      .no-scrollbar {
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-      }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
 
-      /* Subtle Grid Pattern */
-      .bg-grid-pattern {
-        background-image: linear-gradient(to right, rgba(128, 128, 128, 0.05) 1px, transparent 1px),
-                          linear-gradient(to bottom, rgba(128, 128, 128, 0.05) 1px, transparent 1px);
-        background-size: 40px 40px;
-      }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
 
-      /* Readme HTML Styling */
-      .readme-content {
-        font-family: 'Inter', sans-serif;
-        font-size: 0.85rem;
-        line-height: 1.7;
-        overflow-wrap: break-word;
-        word-wrap: break-word;
-        max-width: 100%;
-      }
+    ::-webkit-scrollbar-thumb {
+      background: #e4e4e7;
+      border-radius: 3px;
+    }
 
-      /* Dark Mode Readme - Robust Overrides */
-      html.dark .readme-content {
-        color: #ffffff;
-      }
-      html.dark .readme-content p,
-      html.dark .readme-content li,
-      html.dark .readme-content ul,
-      html.dark .readme-content ol,
-      html.dark .readme-content span,
-      html.dark .readme-content div {
-        color: #ffffff;
-      }
+    .dark ::-webkit-scrollbar-thumb {
+      background: #27272a;
+    }
 
-      html.dark .readme-content h1,
-      html.dark .readme-content h2,
-      html.dark .readme-content h3,
-      html.dark .readme-content h4,
-      html.dark .readme-content h5,
-      html.dark .readme-content h6 {
-        color: #ffffff;
-        border-color: #3f3f46;
-      }
+    .dark ::-webkit-scrollbar-thumb:hover {
+      background: #52525b;
+    }
 
-      html.dark .readme-content a {
-        color: #60a5fa; /* Blue-400 for visibility */
-        text-decoration-color: #3b82f6;
-        font-weight: 500;
-      }
-      html.dark .readme-content a:hover {
-        color: #93c5fd;
-        text-decoration: underline;
-      }
+    :not(.dark) ::-webkit-scrollbar-thumb {
+      background: #d4d4d8;
+    }
 
-      html.dark .readme-content strong { color: #ffffff; font-weight: 700; }
-      html.dark .readme-content b { color: #ffffff; font-weight: 700; }
+    :not(.dark) ::-webkit-scrollbar-thumb:hover {
+      background: #a1a1aa;
+    }
 
-      html.dark .readme-content img {
-        border-color: #27272a;
-        opacity: 0.9;
-        background-color: white; /* Ensure transparency in images doesn't break readability if image assumes white bg */
-        border-radius: 4px;
-        max-width: 100% !important;
-        height: auto !important;
-      }
+    /* Utilities */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
 
-      html.dark .readme-content code {
-        background: #27272a;
-        color: #e4e4e7;
-        border-color: #3f3f46;
-      }
-      html.dark .readme-content pre {
-        background: #18181b;
-        border-color: #3f3f46;
-      }
-      html.dark .readme-content blockquote {
-        border-left-color: #52525b;
-        color: #a1a1aa;
-      }
-      html.dark .readme-content th {
-        border-bottom-color: #3f3f46;
-        color: #ffffff;
-      }
-      html.dark .readme-content td {
-        border-bottom-color: #27272a;
-        color: #d4d4d8;
-      }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
 
-      /* Light Mode Readme */
-      html:not(.dark) .readme-content { color: #3f3f46; }
-      html:not(.dark) .readme-content h1,
-      html:not(.dark) .readme-content h2,
-      html:not(.dark) .readme-content h3 { color: #18181b; border-color: #e4e4e7; }
-      html:not(.dark) .readme-content a { color: #000; text-decoration-color: #a1a1aa; font-weight: 500; }
-      html:not(.dark) .readme-content strong { color: #000; font-weight: 600; }
-      html:not(.dark) .readme-content img { border-color: #e4e4e7; max-width: 100% !important; height: auto !important; }
-      html:not(.dark) .readme-content code { background: #f4f4f5; color: #18181b; border-color: #e4e4e7; }
-      html:not(.dark) .readme-content pre { background: #f4f4f5; border-color: #e4e4e7; }
-      html:not(.dark) .readme-content blockquote { border-left-color: #d4d4d8; color: #71717a; }
-      html:not(.dark) .readme-content th { border-bottom-color: #d4d4d8; color: #18181b; }
-      html:not(.dark) .readme-content td { border-bottom-color: #e4e4e7; }
+    /* Subtle Grid Pattern */
+    .bg-grid-pattern {
+      background-image: linear-gradient(to right, rgba(128, 128, 128, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(128, 128, 128, 0.05) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
 
-      /* Common Readme Elements */
-      .readme-content h1, .readme-content h2, .readme-content h3, .readme-content h4 {
-        font-family: 'Cinzel', serif;
-        margin-top: 1.5em;
-        margin-bottom: 0.5em;
-        font-weight: 600;
-      }
-      .readme-content h1 { font-size: 1.5em; border-bottom-width: 1px; padding-bottom: 0.3em; }
-      .readme-content h2 { font-size: 1.3em; border-bottom-width: 1px; padding-bottom: 0.3em; }
-      .readme-content h3 { font-size: 1.1em; }
-      .readme-content p { margin-bottom: 1em; }
-      .readme-content a { text-decoration: underline; text-underline-offset: 2px; }
-      .readme-content a:hover { text-decoration-color: currentColor; }
-      .readme-content img { max-width: 100%; height: auto; border-radius: 4px; border-width: 1px; margin: 1.5em auto; display: block; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-      .readme-content code { font-family: 'monospace'; padding: 0.1em 0.4em; border-radius: 4px; font-size: 0.85em; border-width: 1px; }
-      .readme-content pre { padding: 1em; overflow-x: auto; border-radius: 4px; border-width: 1px; margin: 1.5em 0; max-width: 100%; }
-      .readme-content pre code { background: transparent; padding: 0; color: inherit; border: none; }
-      .readme-content ul { list-style-type: disc; margin-left: 1.5em; margin-bottom: 1em; }
-      .readme-content ol { list-style-type: decimal; margin-left: 1.5em; margin-bottom: 1em; }
-      .readme-content li { margin-bottom: 0.25em; }
-      .readme-content blockquote { border-left-width: 4px; padding-left: 1em; font-style: italic; margin: 1.5em 0; }
-      .readme-content hr { border: 0; border-top: 1px solid; opacity: 0.2; margin: 2em 0; }
-      .readme-content table { width: 100%; border-collapse: collapse; margin: 1.5em 0; font-size: 0.9em; display: block; overflow-x: auto; }
-      .readme-content th { text-align: left; border-bottom-width: 1px; padding: 0.75em; font-weight: 600; }
-      .readme-content td { border-bottom-width: 1px; padding: 0.75em; }
+    /* Readme HTML Styling */
+    .readme-content {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      line-height: 1.7;
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+      max-width: 100%;
+    }
 
-      /* Syntax Highlighting Override */
-      .readme-content pre code.hljs {
-        background: transparent;
-        padding: 0;
-      }
-      /* Ensure Atom One Dark background applies to the pre container nicely */
-      .readme-content .hljs {
-        background: #282c34 !important; /* Atom One Dark bg */
-        color: #abb2bf !important;
-      }
-    </style>
-    </style>
-  </head>
-  <body class="antialiased">
-    <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
-  </body>
+    /* Dark Mode Readme - Robust Overrides */
+    html.dark .readme-content {
+      color: #ffffff;
+    }
+
+    html.dark .readme-content p,
+    html.dark .readme-content li,
+    html.dark .readme-content ul,
+    html.dark .readme-content ol,
+    html.dark .readme-content span,
+    html.dark .readme-content div {
+      color: #ffffff;
+    }
+
+    html.dark .readme-content h1,
+    html.dark .readme-content h2,
+    html.dark .readme-content h3,
+    html.dark .readme-content h4,
+    html.dark .readme-content h5,
+    html.dark .readme-content h6 {
+      color: #ffffff;
+      border-color: #3f3f46;
+    }
+
+    html.dark .readme-content a {
+      color: #60a5fa;
+      /* Blue-400 for visibility */
+      text-decoration-color: #3b82f6;
+      font-weight: 500;
+    }
+
+    html.dark .readme-content a:hover {
+      color: #93c5fd;
+      text-decoration: underline;
+    }
+
+    html.dark .readme-content strong {
+      color: #ffffff;
+      font-weight: 700;
+    }
+
+    html.dark .readme-content b {
+      color: #ffffff;
+      font-weight: 700;
+    }
+
+    html.dark .readme-content img {
+      border-color: #27272a;
+      opacity: 0.9;
+      background-color: white;
+      /* Ensure transparency in images doesn't break readability if image assumes white bg */
+      border-radius: 4px;
+      max-width: 100% !important;
+      height: auto !important;
+    }
+
+    html.dark .readme-content code {
+      background: #27272a;
+      color: #e4e4e7;
+      border-color: #3f3f46;
+    }
+
+    html.dark .readme-content pre {
+      background: #18181b;
+      border-color: #3f3f46;
+    }
+
+    html.dark .readme-content blockquote {
+      border-left-color: #52525b;
+      color: #a1a1aa;
+    }
+
+    html.dark .readme-content th {
+      border-bottom-color: #3f3f46;
+      color: #ffffff;
+    }
+
+    html.dark .readme-content td {
+      border-bottom-color: #27272a;
+      color: #d4d4d8;
+    }
+
+    /* Light Mode Readme */
+    html:not(.dark) .readme-content {
+      color: #3f3f46;
+    }
+
+    html:not(.dark) .readme-content h1,
+    html:not(.dark) .readme-content h2,
+    html:not(.dark) .readme-content h3 {
+      color: #18181b;
+      border-color: #e4e4e7;
+    }
+
+    html:not(.dark) .readme-content a {
+      color: #000;
+      text-decoration-color: #a1a1aa;
+      font-weight: 500;
+    }
+
+    html:not(.dark) .readme-content strong {
+      color: #000;
+      font-weight: 600;
+    }
+
+    html:not(.dark) .readme-content img {
+      border-color: #e4e4e7;
+      max-width: 100% !important;
+      height: auto !important;
+    }
+
+    html:not(.dark) .readme-content code {
+      background: #f4f4f5;
+      color: #18181b;
+      border-color: #e4e4e7;
+    }
+
+    html:not(.dark) .readme-content pre {
+      background: #f4f4f5;
+      border-color: #e4e4e7;
+    }
+
+    html:not(.dark) .readme-content blockquote {
+      border-left-color: #d4d4d8;
+      color: #71717a;
+    }
+
+    html:not(.dark) .readme-content th {
+      border-bottom-color: #d4d4d8;
+      color: #18181b;
+    }
+
+    html:not(.dark) .readme-content td {
+      border-bottom-color: #e4e4e7;
+    }
+
+    /* Common Readme Elements */
+    .readme-content h1,
+    .readme-content h2,
+    .readme-content h3,
+    .readme-content h4 {
+      font-family: 'Cinzel', serif;
+      margin-top: 1.5em;
+      margin-bottom: 0.5em;
+      font-weight: 600;
+    }
+
+    .readme-content h1 {
+      font-size: 1.5em;
+      border-bottom-width: 1px;
+      padding-bottom: 0.3em;
+    }
+
+    .readme-content h2 {
+      font-size: 1.3em;
+      border-bottom-width: 1px;
+      padding-bottom: 0.3em;
+    }
+
+    .readme-content h3 {
+      font-size: 1.1em;
+    }
+
+    .readme-content p {
+      margin-bottom: 1em;
+    }
+
+    .readme-content a {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .readme-content a:hover {
+      text-decoration-color: currentColor;
+    }
+
+    .readme-content img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+      border-width: 1px;
+      margin: 1.5em auto;
+      display: block;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .readme-content code {
+      font-family: 'monospace';
+      padding: 0.1em 0.4em;
+      border-radius: 4px;
+      font-size: 0.85em;
+      border-width: 1px;
+    }
+
+    .readme-content pre {
+      padding: 1em;
+      overflow-x: auto;
+      border-radius: 4px;
+      border-width: 1px;
+      margin: 1.5em 0;
+      max-width: 100%;
+    }
+
+    .readme-content pre code {
+      background: transparent;
+      padding: 0;
+      color: inherit;
+      border: none;
+    }
+
+    .readme-content ul {
+      list-style-type: disc;
+      margin-left: 1.5em;
+      margin-bottom: 1em;
+    }
+
+    .readme-content ol {
+      list-style-type: decimal;
+      margin-left: 1.5em;
+      margin-bottom: 1em;
+    }
+
+    .readme-content li {
+      margin-bottom: 0.25em;
+    }
+
+    .readme-content blockquote {
+      border-left-width: 4px;
+      padding-left: 1em;
+      font-style: italic;
+      margin: 1.5em 0;
+    }
+
+    .readme-content hr {
+      border: 0;
+      border-top: 1px solid;
+      opacity: 0.2;
+      margin: 2em 0;
+    }
+
+    .readme-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5em 0;
+      font-size: 0.9em;
+      display: block;
+      overflow-x: auto;
+    }
+
+    .readme-content th {
+      text-align: left;
+      border-bottom-width: 1px;
+      padding: 0.75em;
+      font-weight: 600;
+    }
+
+    .readme-content td {
+      border-bottom-width: 1px;
+      padding: 0.75em;
+    }
+
+    /* Syntax Highlighting Override */
+    .readme-content pre code.hljs {
+      background: transparent;
+      padding: 0;
+    }
+
+    /* Ensure Atom One Dark background applies to the pre container nicely */
+    .readme-content .hljs {
+      background: #282c34 !important;
+      /* Atom One Dark bg */
+      color: #abb2bf !important;
+    }
+  </style>
+
+</head>
+
+<body class="antialiased">
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+
 </html>
