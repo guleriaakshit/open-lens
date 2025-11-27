@@ -55,13 +55,13 @@
       /* Dynamic Body Background based on Theme */
       body {
         font-family: 'Inter', sans-serif;
-        background-color: #09090b; 
+        background-color: #09090b;
         color: #e4e4e7;
         overflow: hidden; /* CRITICAL: Prevent body scroll to fix background jump glitch */
         height: 100vh;
         width: 100vw;
       }
-      
+
       html.dark body {
         background-color: #09090b;
         color: #e4e4e7;
@@ -117,7 +117,7 @@
       :not(.dark) ::-webkit-scrollbar-thumb:hover {
         background: #a1a1aa;
       }
-      
+
       /* Utilities */
       .no-scrollbar::-webkit-scrollbar {
         display: none;
@@ -145,76 +145,76 @@
       }
 
       /* Dark Mode Readme - Robust Overrides */
-      html.dark .readme-content { 
-        color: #ffffff; 
+      html.dark .readme-content {
+        color: #ffffff;
       }
-      html.dark .readme-content p, 
-      html.dark .readme-content li, 
-      html.dark .readme-content ul, 
-      html.dark .readme-content ol, 
+      html.dark .readme-content p,
+      html.dark .readme-content li,
+      html.dark .readme-content ul,
+      html.dark .readme-content ol,
       html.dark .readme-content span,
-      html.dark .readme-content div { 
-        color: #ffffff; 
+      html.dark .readme-content div {
+        color: #ffffff;
       }
 
-      html.dark .readme-content h1, 
-      html.dark .readme-content h2, 
-      html.dark .readme-content h3, 
-      html.dark .readme-content h4, 
-      html.dark .readme-content h5, 
-      html.dark .readme-content h6 { 
-        color: #ffffff; 
-        border-color: #3f3f46; 
+      html.dark .readme-content h1,
+      html.dark .readme-content h2,
+      html.dark .readme-content h3,
+      html.dark .readme-content h4,
+      html.dark .readme-content h5,
+      html.dark .readme-content h6 {
+        color: #ffffff;
+        border-color: #3f3f46;
       }
 
-      html.dark .readme-content a { 
+      html.dark .readme-content a {
         color: #60a5fa; /* Blue-400 for visibility */
-        text-decoration-color: #3b82f6; 
-        font-weight: 500; 
+        text-decoration-color: #3b82f6;
+        font-weight: 500;
       }
-      html.dark .readme-content a:hover { 
-        color: #93c5fd; 
+      html.dark .readme-content a:hover {
+        color: #93c5fd;
         text-decoration: underline;
       }
 
       html.dark .readme-content strong { color: #ffffff; font-weight: 700; }
       html.dark .readme-content b { color: #ffffff; font-weight: 700; }
-      
-      html.dark .readme-content img { 
-        border-color: #27272a; 
-        opacity: 0.9; 
+
+      html.dark .readme-content img {
+        border-color: #27272a;
+        opacity: 0.9;
         background-color: white; /* Ensure transparency in images doesn't break readability if image assumes white bg */
         border-radius: 4px;
         max-width: 100% !important;
         height: auto !important;
       }
-      
-      html.dark .readme-content code { 
-        background: #27272a; 
-        color: #e4e4e7; 
-        border-color: #3f3f46; 
+
+      html.dark .readme-content code {
+        background: #27272a;
+        color: #e4e4e7;
+        border-color: #3f3f46;
       }
-      html.dark .readme-content pre { 
-        background: #18181b; 
-        border-color: #3f3f46; 
+      html.dark .readme-content pre {
+        background: #18181b;
+        border-color: #3f3f46;
       }
-      html.dark .readme-content blockquote { 
-        border-left-color: #52525b; 
-        color: #a1a1aa; 
+      html.dark .readme-content blockquote {
+        border-left-color: #52525b;
+        color: #a1a1aa;
       }
-      html.dark .readme-content th { 
-        border-bottom-color: #3f3f46; 
-        color: #ffffff; 
+      html.dark .readme-content th {
+        border-bottom-color: #3f3f46;
+        color: #ffffff;
       }
-      html.dark .readme-content td { 
-        border-bottom-color: #27272a; 
+      html.dark .readme-content td {
+        border-bottom-color: #27272a;
         color: #d4d4d8;
       }
 
       /* Light Mode Readme */
       html:not(.dark) .readme-content { color: #3f3f46; }
-      html:not(.dark) .readme-content h1, 
-      html:not(.dark) .readme-content h2, 
+      html:not(.dark) .readme-content h1,
+      html:not(.dark) .readme-content h2,
       html:not(.dark) .readme-content h3 { color: #18181b; border-color: #e4e4e7; }
       html:not(.dark) .readme-content a { color: #000; text-decoration-color: #a1a1aa; font-weight: 500; }
       html:not(.dark) .readme-content strong { color: #000; font-weight: 600; }
@@ -262,21 +262,8 @@
         color: #abb2bf !important;
       }
     </style>
-  <script type="importmap">
-{
-  "imports": {
-    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
-    "react-dom": "https://aistudiocdn.com/react-dom@^19.2.0",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "react": "https://aistudiocdn.com/react@^19.2.0",
-    "framer-motion": "https://esm.sh/framer-motion@11.0.8?external=react,react-dom",
-    "highlight.js": "https://esm.sh/highlight.js@11.9.0"
-  }
-}
-</script>
-<link rel="stylesheet" href="/index.css">
-</head>
+    </style>
+  </head>
   <body class="antialiased">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
