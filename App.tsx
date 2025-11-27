@@ -1,28 +1,28 @@
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { AlertTriangle, ArrowLeft, ArrowUpRight, Briefcase, Github, Link as LinkIcon, Loader2, MapPin, Moon, Plus, Star, Sun, X } from 'lucide-react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
-import { Github, Loader2, ArrowLeft, Sun, Moon, Link as LinkIcon, Briefcase, Star, ArrowUpRight, MapPin, Plus, AlertTriangle, X } from 'lucide-react';
-import { FilterState, GitHubRepo, SortOption, OrderOption, GitHubUserProfile } from './types';
-import { searchRepositories, getUserProfile, getUserTopRepos, getSessionRepos, saveSessionRepos } from './services/githubService';
-import { MAX_STARS, ITEMS_PER_PAGE } from './constants';
-import Landing from './components/Landing';
 import FilterPanel from './components/FilterPanel';
+import Landing from './components/Landing';
 import RepoCard from './components/RepoCard';
-import { motion, AnimatePresence } from 'framer-motion';
+import { ITEMS_PER_PAGE, MAX_STARS } from './constants';
+import { getSessionRepos, getUserProfile, getUserTopRepos, saveSessionRepos, searchRepositories } from './services/githubService';
+import { FilterState, GitHubRepo, GitHubUserProfile, OrderOption, SortOption } from './types';
 
 // Lazy load only secondary views
 const About = React.lazy(() => import('./components/About'));
 
 const App: React.FC = () => {
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
-  
+
   // Hydrate repos from session storage for instant load if returning
   const [repos, setRepos] = useState<GitHubRepo[]>(() => getSessionRepos());
-  
+
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [searchWarning, setSearchWarning] = useState<string | null>(null);
-  
+
   // Pagination & View State
   const [page, setPage] = useState<number>(1);
   const [viewMode, setViewMode] = useState<'landing' | 'search' | 'user' | 'about'>(() => {
@@ -31,9 +31,9 @@ const App: React.FC = () => {
     if (saved === 'search' || saved === 'user') return saved as any;
     return 'landing';
   });
-  
+
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
-  
+
   // User Profile State
   const [userProfile, setUserProfile] = useState<GitHubUserProfile | null>(null);
   const [topRepos, setTopRepos] = useState<GitHubRepo[]>([]);
@@ -42,7 +42,7 @@ const App: React.FC = () => {
   const [profileError, setProfileError] = useState<string | null>(null);
 
   const [hasMore, setHasMore] = useState<boolean>(true);
-  
+
   // Track the ID of the last requested fetch to prevent race conditions
   const lastRequestId = useRef<number>(0);
 
@@ -102,11 +102,11 @@ const App: React.FC = () => {
   // Fetch User Profile and Top Repos when selectedUser changes
   useEffect(() => {
     if (viewMode === 'user' && selectedUser) {
-      setUserProfile(null); 
-      setTopRepos([]); 
+      setUserProfile(null);
+      setTopRepos([]);
       setLoadingProfile(true);
       setProfileError(null);
-      
+
       const fetchProfileData = async () => {
         try {
           const [profile, repos] = await Promise.all([
@@ -136,23 +136,23 @@ const App: React.FC = () => {
     if (viewMode === 'about') return;
 
     // Background refresh logic:
-    // If we have repos already (restored from cache) and this is the initial page load, 
+    // If we have repos already (restored from cache) and this is the initial page load,
     // don't set loading=true to prevent UI flickering. We just update silently.
     const isBackgroundRefresh = !isLoadMore && page === 1 && repos.length > 0 && lastRequestId.current === 0;
 
     if (!isBackgroundRefresh) {
         setLoading(true);
     }
-    
+
     setError(null);
     if (!isLoadMore) setSearchWarning(null); // Clear warning on new search only
-    
+
     const requestId = ++lastRequestId.current;
     const currentPage = isLoadMore ? page : 1;
 
     try {
       const response = await searchRepositories(filters, currentPage, selectedUser);
-      
+
       if (requestId !== lastRequestId.current) return;
 
       if (response.warning) {
@@ -165,9 +165,9 @@ const App: React.FC = () => {
       } else {
         newRepos = response.items;
       }
-      
+
       setRepos(newRepos);
-      
+
       // Save snapshot for next session instant load
       saveSessionRepos(newRepos);
 
@@ -209,7 +209,7 @@ const App: React.FC = () => {
       // We do NOT clear repos here immediately to avoid white flash before new data arrives,
       // The fetchData function will overwrite repos.
   }, [filters.query, filters.language, filters.license, filters.sort, filters.order, filters.minStars, filters.maxStars, selectedUser]);
-  
+
   const handleSearch = () => {
     setPage(1);
     fetchData(false);
@@ -218,13 +218,13 @@ const App: React.FC = () => {
   const handleUserClick = (username: string) => {
       setSelectedUser(username);
       setViewMode('user');
-      setFilters(prev => ({ 
-          ...prev, 
+      setFilters(prev => ({
+          ...prev,
           query: '',
           minStars: 0,
           maxStars: MAX_STARS,
           sort: SortOption.UPDATED,
-      })); 
+      }));
   };
 
   const handleBackToSearch = () => {
@@ -296,18 +296,18 @@ const App: React.FC = () => {
 
   return (
     <div className="h-screen w-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-200 font-light relative overflow-hidden flex flex-col">
-      
+
       {/* PERSISTENT BACKGROUND - Attached to Viewport */}
       <div className="fixed inset-0 bg-grid-pattern z-0 opacity-[0.4] pointer-events-none" />
       <div className="fixed top-0 left-0 w-full h-[60vh] bg-gradient-to-b from-zinc-200/40 dark:from-zinc-900/40 to-transparent pointer-events-none z-0" />
 
-      {/* Using mode="popLayout" allows the exiting component to 'pop' out of the layout flow 
+      {/* Using mode="popLayout" allows the exiting component to 'pop' out of the layout flow
           while the entering component renders on top/behind, preventing the blank frame flash. */}
       <AnimatePresence mode="popLayout">
         {viewMode === 'landing' ? (
            <Landing key="landing" onEnter={handleEnterApp} />
         ) : (
-           <motion.div 
+           <motion.div
              key="app-content"
              initial={{ opacity: 0, scale: 1.05, filter: 'blur(10px)' }}
              animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
@@ -319,7 +319,7 @@ const App: React.FC = () => {
               {/* Header - Fixed Height */}
               <header className="shrink-0 z-50 bg-white/70 dark:bg-zinc-950/70 backdrop-blur-xl border-b border-zinc-200 dark:border-white/5 h-20 md:h-24 flex items-center justify-between px-4 md:px-12 shadow-sm dark:shadow-none transition-colors duration-300">
                 <div className="flex items-center gap-4 md:gap-6 min-w-0">
-                    <button 
+                    <button
                       onClick={() => viewMode === 'about' ? toggleAbout() : handleBackToSearch()}
                       className="text-2xl md:text-3xl font-logo tracking-wide text-zinc-900 dark:text-zinc-100 cursor-pointer select-none focus:outline-none shrink-0"
                     >
@@ -327,7 +327,7 @@ const App: React.FC = () => {
                     </button>
 
                     {viewMode === 'user' && (
-                        <button 
+                        <button
                             onClick={handleBackToSearch}
                             className="group flex items-center gap-2 md:gap-3 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-all duration-300 ml-2 md:ml-4 shrink-0"
                         >
@@ -338,7 +338,7 @@ const App: React.FC = () => {
                         </button>
                     )}
                 </div>
-                
+
                 <div className="flex items-center gap-4 md:gap-8 shrink-0">
                   {viewMode !== 'about' && (
                     <div className="hidden md:flex flex-col items-end animate-in fade-in duration-500">
@@ -350,9 +350,9 @@ const App: React.FC = () => {
                         </div>
                     </div>
                   )}
-                  
+
                   <div className="flex items-center gap-3">
-                    <button 
+                    <button
                         onClick={toggleTheme}
                         className="relative w-14 h-8 rounded-full border border-zinc-200 dark:border-white/10 bg-zinc-100/50 dark:bg-zinc-900/50 shadow-inner flex items-center px-1 transition-all duration-300 group focus:outline-none hover:border-zinc-300 dark:hover:border-white/20"
                         aria-label="Toggle Theme"
@@ -370,27 +370,27 @@ const App: React.FC = () => {
               </header>
 
               <main className="flex-1 flex flex-col md:flex-row min-h-0 relative z-10">
-                
+
                 {viewMode === 'about' ? (
                    <React.Suspense fallback={null}>
                       <About onReturn={toggleAbout} />
                    </React.Suspense>
                 ) : (
                   <>
-                    <FilterPanel 
-                        filters={filters} 
-                        setFilters={setFilters} 
+                    <FilterPanel
+                        filters={filters}
+                        setFilters={setFilters}
                         isLoading={loading}
                     />
-                    
+
                     {/* Scrollable Main Content Area */}
                     <section className="flex-1 overflow-y-auto min-h-0 p-3 md:p-6 lg:p-10 2xl:p-12 items-start min-w-0">
                         <div className="max-w-8xl mx-auto w-full pb-20">
-                        
+
                         {/* Warning Banner */}
                         <AnimatePresence>
                             {searchWarning && (
-                                <motion.div 
+                                <motion.div
                                     initial={{ opacity: 0, y: -20, height: 0 }}
                                     animate={{ opacity: 1, y: 0, height: 'auto' }}
                                     exit={{ opacity: 0, y: -20, height: 0 }}
@@ -401,7 +401,7 @@ const App: React.FC = () => {
                                             <AlertTriangle className="w-5 h-5 shrink-0" />
                                             <span className="text-sm font-medium">{searchWarning}</span>
                                         </div>
-                                        <button 
+                                        <button
                                             onClick={() => setSearchWarning(null)}
                                             className="p-1 hover:bg-amber-100 dark:hover:bg-amber-900/30 rounded transition-colors"
                                         >
@@ -411,7 +411,7 @@ const App: React.FC = () => {
                                 </motion.div>
                             )}
                         </AnimatePresence>
-                        
+
                         {/* User Profile Section */}
                         {viewMode === 'user' && selectedUser && (
                             <div className="mb-12 border-b border-zinc-200 dark:border-white/5 pb-12 relative overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -432,8 +432,8 @@ const App: React.FC = () => {
                                         <div className="relative group shrink-0 mx-auto md:mx-0">
                                             <a href={displayProfile.html_url} target="_blank" rel="noopener noreferrer" title="View GitHub Profile">
                                                 <div className="absolute inset-0 bg-zinc-900/5 dark:bg-white/10 rounded-full blur-xl scale-110 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-                                                <img 
-                                                  src={displayProfile.avatar_url} 
+                                                <img
+                                                  src={displayProfile.avatar_url}
                                                   alt={displayProfile.login}
                                                   className="relative w-28 h-28 md:w-40 md:h-40 rounded-full border-2 border-zinc-100 dark:border-zinc-800 shadow-2xl bg-zinc-100 dark:bg-zinc-800 group-hover:border-zinc-300 dark:group-hover:border-zinc-600 transition-colors"
                                                   onError={(e) => {
@@ -458,7 +458,7 @@ const App: React.FC = () => {
                                                 <a href={displayProfile.html_url} target="_blank" rel="noopener noreferrer" className="text-base md:text-xl font-mono text-zinc-400 dark:text-zinc-500 mb-4 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors w-fit block mx-auto md:mx-0">
                                                     @{displayProfile.login}
                                                 </a>
-                                                
+
                                                 {displayProfile.bio && (
                                                     <p className="text-zinc-600 dark:text-zinc-300 text-sm md:text-base font-light italic max-w-2xl leading-relaxed mb-6 border-l-2 border-zinc-200 dark:border-zinc-800 pl-4 mx-auto md:mx-0 text-left">
                                                         "{displayProfile.bio}"
@@ -506,7 +506,7 @@ const App: React.FC = () => {
                                                     </div>
                                                 </div>
                                                 ) : null}
-                                                
+
                                                 {topRepos.length > 0 && <div className="hidden 2xl:block w-px h-12 bg-zinc-200 dark:bg-zinc-800"></div>}
 
                                                 {topRepos.length > 0 && (
@@ -534,7 +534,7 @@ const App: React.FC = () => {
                             <div className="w-full h-80 flex flex-col items-center justify-center text-center border border-red-500/10 bg-red-500/5 p-12 rounded-lg backdrop-blur-sm mb-12 animate-in fade-in zoom-in-95 duration-500">
                                 <p className="text-red-500 dark:text-red-300 font-serif text-2xl mb-3 tracking-wide">Connection Interrupted</p>
                                 <p className="text-red-600/60 dark:text-red-400/60 text-sm font-mono mb-8">{error}</p>
-                                <button 
+                                <button
                                     onClick={handleSearch}
                                     className="px-8 py-3 border border-red-500/20 hover:border-red-500/50 hover:bg-red-500/10 text-red-600 dark:text-red-200 text-[13px] uppercase tracking-[0.2em] transition-all duration-300"
                                 >
@@ -555,7 +555,7 @@ const App: React.FC = () => {
 
                         {/* RENDER CONTENT BASED ON ACTIVE TAB */}
                         <AnimatePresence mode="wait">
-                            <motion.div 
+                            <motion.div
                                 key="repos-grid"
                                 className="grid grid-cols-1 2xl:grid-cols-2 gap-4 md:gap-6 lg:gap-8"
                                 variants={containerVariants}
@@ -564,10 +564,10 @@ const App: React.FC = () => {
                                 exit={{ opacity: 0 }}
                             >
                                 {repos.map((repo) => (
-                                    <RepoCard 
-                                        key={repo.id} 
-                                        repo={repo} 
-                                        onUserClick={handleUserClick} 
+                                    <RepoCard
+                                        key={repo.id}
+                                        repo={repo}
+                                        onUserClick={handleUserClick}
                                         onLanguageClick={handleLanguageClick}
                                     />
                                 ))}
@@ -598,7 +598,7 @@ const App: React.FC = () => {
                                         </span>
                                      </button>
                                 )}
-                                
+
                                 {!loading && !error && !hasMore && (
                                     <div className="flex flex-col items-center gap-4 opacity-30 hover:opacity-60 transition-opacity">
                                         <div className="w-px h-16 bg-gradient-to-b from-transparent via-zinc-400 dark:via-zinc-500 to-transparent"></div>
@@ -611,6 +611,7 @@ const App: React.FC = () => {
                     </section>
                   </>
                 )}
+                  </main>
            </motion.div>
         )}
       </AnimatePresence>
